@@ -14,37 +14,37 @@ def build(cwd, site_dir):
     for version in cfg['extra']['versions']:
         if not 'separate' in version or not version['separate']:
             d = os.path.join('versions', version['dir'])
-            print 'Verifying dir %s' % (d)
+            print('Verifying dir %s' % (d))
             if not os.path.isdir(d):
-                print "The directory %s does not exist" % (d)
+                print("The directory %s does not exist" % (d))
                 return
 
     # sanity check - dependent_repos exist in '..'
     for repo in dependent_repos:
         d = os.path.join(cwd, '..', repo)
-        print 'Verifying repo dependency in %s' % (d)
+        print('Verifying repo dependency in %s' % (d))
         if not os.path.isdir(d):
-            print "The directory %s does not exist" % (d)
+            print("The directory %s does not exist" % (d))
             return
 
     # sanity check - only one latest
     latest = False
     for version in cfg['extra']['versions']:
         if not latest and 'latest' in version and version['latest']:
-            print 'Latest is %s' % (version['dir'])
+            print('Latest is %s' % (version['dir']))
             latest = True
         elif latest and 'latest' in version and version['latest']:
-            print 'ERROR: More than one version is latest.'
-            print 'Only one version can be latest: True.'
-            print 'Check mkdocs.yml.'
+            print('ERROR: More than one version is latest.')
+            print('Only one version can be latest: True.')
+            print('Check mkdocs.yml.')
             return
 
-    print "Building site pages"
+    print("Building site pages")
     sh.rm('-rf', site_dir)
     sh.mkdocs('build', '--clean', '--site-dir', site_dir)
 
     for version in cfg['extra']['versions']:
-        print "Building doc pages for: %s" % (version['dir'])
+        print("Building doc pages for: %s" % (version['dir']))
         if not 'separate' in version or not version['separate']:
             sh.mkdocs('build', '--site-dir', os.path.join(site_dir, version['dir']), _cwd = os.path.join("versions", version['dir']))
         else:
